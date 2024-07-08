@@ -1,0 +1,69 @@
+<div class="container">
+  <div class="add-event-modal">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+          <h2 mat-dialog-title>{{ title() }} </h2>
+          <mat-dialog-content class="form-content">
+              <div>Saisissez l'activité : </div>
+              <mat-form-field>
+                  <mat-label>Activité</mat-label>
+                  <mat-select formControlName="activite" name="activite"  (selectionChange)="onChangeActivite($event)">
+                      @for (activite of activites; track activite) {
+                      <mat-option [value]="activite">{{activite.name}}</mat-option>
+                      }
+                  </mat-select>
+              </mat-form-field>
+              <div>Saisissez un intitulé pour cette activité :</div>
+              <mat-form-field appearance="fill">
+                  <mat-label>Intitulé</mat-label>
+                  <input matInput formControlName="label">
+              </mat-form-field>
+              <div class="dates">
+                  <mat-form-field>
+                      <mat-label>Date de début</mat-label>
+                      <input matInput formControlName="startDate" [matDatepicker]="pickerStartDate">
+                      <mat-hint>{{dateFormatLabel}}</mat-hint>
+                      <mat-datepicker-toggle matIconSuffix [for]="pickerStartDate"></mat-datepicker-toggle>
+                      <mat-datepicker #pickerStartDate></mat-datepicker>
+                  </mat-form-field>
+                  <mat-form-field class="hour">
+                      <mat-label>Heure</mat-label>
+                      <mat-select [disabled]="disableTimeChange()" formControlName="startHour" name="startHour">
+                          @for (hour of hours; track hour) {
+                          <mat-option [value]="hour.value">{{hour.label}}</mat-option>
+                          }
+                      </mat-select>
+                  </mat-form-field>
+                  <button mat-stroked-button color="info" type="button" (click)="setFirstHour()">Min</button>
+              </div>
+              <div class="dates">
+                  <mat-form-field>
+                      <mat-label>Date de fin</mat-label>
+                      <input matInput formControlName="endDate" [matDatepicker]="pickerEndDate">
+                      <mat-hint>{{dateFormatLabel}}</mat-hint>
+                      <mat-datepicker-toggle matIconSuffix [for]="pickerEndDate"></mat-datepicker-toggle>
+                      <mat-datepicker #pickerEndDate></mat-datepicker>
+                  </mat-form-field>
+                  <mat-form-field class="hour">
+                      <mat-label>Heure</mat-label>
+                      <mat-select [disabled]="disableTimeChange()" formControlName="endHour" name="endHour">
+                          @for (hour of hours; track hour) {
+                          <mat-option [value]="hour.value">{{hour.label}}</mat-option>
+                          }
+                      </mat-select>
+                  </mat-form-field>
+                  <button mat-stroked-button color="info" type="button" (click)="setLastHour()">Max</button>
+              </div>
+
+          </mat-dialog-content>
+          <mat-divider></mat-divider>
+          <mat-dialog-actions class="action-buttons">
+              <button type="button" mat-flat-button color="warn" (click)="cancel()">
+                  <mat-icon>cancel</mat-icon>Annuler
+              </button>
+              <button mat-flat-button color="primary" (click)="submit()">
+                  <mat-icon>save</mat-icon>Enregistrer
+              </button>
+          </mat-dialog-actions>
+      </form>
+  </div>
+</div>

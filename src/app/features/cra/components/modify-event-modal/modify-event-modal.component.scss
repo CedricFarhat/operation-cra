@@ -1,0 +1,42 @@
+.container {
+  padding: 20px;
+}
+
+.add-event-modal {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.form-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dates {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+.hour {
+  width: 110px;
+}
+
+.action-buttons {
+  padding-top: 16px;
+}
+
+mat-dialog-content {
+  display: flex;
+  flex-direction: column;
+}
+
+mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+

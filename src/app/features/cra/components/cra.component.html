@@ -1,0 +1,47 @@
+<div class="calendar-container">
+    <div class="agent-list-container">
+        <div class="agent-list-label">Sélectionnez un agent : </div>
+        <mat-form-field >
+            <mat-label>Agents</mat-label>
+            <mat-select name="agent" [(ngModel)]="currentAgent">
+                @for (agent of agents(); track agent) {
+                <mat-option [value]="agent">{{agent.name}}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+        <div class="rest-line">Congés restants : <span class="rest-digit">{{currentAgent().daysOffRemaining}}</span></div>
+
+    </div>
+    <div class="calendar-buttons">
+        <div class="calendar-date-nav-buttons">
+            <button class="calendar-nav-button" id="previous" mat-stroked-button color="primary" mwlCalendarPreviousView [(viewDate)]="viewDate" [view]="view"
+                [excludeDays]="daysToRemove()">Précédent</button>
+            <button class="calendar-nav-button" id="today" mat-stroked-button color="primary" mwlCalendarToday [(viewDate)]="viewDate">Aujourd'hui</button>
+            <button class="calendar-nav-button" id="next" mat-stroked-button color="primary" mwlCalendarNextView [(viewDate)]="viewDate" [view]="view"
+                [excludeDays]="daysToRemove()">Suivant</button>
+        </div>
+        <div class="calendar-date-field">
+            {{ viewDate() | calendarDate:(view + 'ViewTitle') : 'fr'}}
+        </div>
+        <div class="calendar-view-nav-buttons">
+            <button mat-stroked-button color="primary" (click)="setView(CalendarView.Month)">Mois</button>
+            <button mat-stroked-button color="primary" (click)="setView(CalendarView.Week)">Semaine</button>
+        </div>
+    </div>
+    <span [ngSwitch]="view">
+        <mwl-calendar-week-view [eventTitleTemplate]="eventTitleTemplate" *ngSwitchCase="CalendarView.Week" [excludeDays]="daysToRemove()" locale="fr"
+            [events]="computedEvents()" [viewDate]="viewDate()"
+            [dayStartHour]="dayStartHour()" [dayEndHour]="dayEndHour() - 1" (eventTimesChanged)="eventTimesChanged($event)"
+            [refresh]="refresh" (hourSegmentClicked)="addEvent($event)">
+        </mwl-calendar-week-view>
+        <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [excludeDays]="daysToRemove()"
+            [activeDayIsOpen]="activeDayIsOpen" locale="fr" [events]="computedEvents()" [viewDate]="viewDate()"
+            (dayClicked)="dayClicked($event.day)" [refresh]="refresh">
+        </mwl-calendar-month-view>
+    </span>
+
+    <ng-template #eventTitleTemplate let-event="event">
+        <span class="event-title">{{event.title}}</span>
+    </ng-template>
+
+</div>
