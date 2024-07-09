@@ -11,7 +11,7 @@ import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/cor
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { randUuid } from '@ngneat/falso';
 import { setHours, setMinutes } from 'date-fns';
-import { activites, dateFormatLabel } from '@features/cra/constants/cra.constants';
+import { ACTIVITES, DATE_FORMAT_LABEL, INVALID_FORM_MESSAGE } from '@features/cra/constants/cra.constants';
 import { CraFormHelper } from '@features/cra/helpers/cra-form.helper';
 import { Leave } from '@features/cra/models/project.enum';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -51,9 +51,8 @@ export class AddEventModalComponent implements OnInit {
   form: FormGroup = this.formHelper.initForm();
 
   title = signal("Ajouter une activité");
-  dateFormatLabel = dateFormatLabel;
-  activites = activites;
-
+  dateFormatLabel = DATE_FORMAT_LABEL;
+  activites = ACTIVITES;
   hours: { label: string, value: number[] }[] = [];
 
   constructor() { }
@@ -61,24 +60,30 @@ export class AddEventModalComponent implements OnInit {
   ngOnInit(): void {
     const dayStartHour = this.incomingData.dayStartHour();
     const dayEndHour = this.incomingData.dayEndHour();
+    this.hours = this.formHelper.initHoursList(dayStartHour, dayEndHour);
+
+    this.initForm();
+  }
+
+  initForm(): void {
     this.form.controls['startDate'].setValue(this.incomingData.timeClicked);
     this.form.controls['endDate'].setValue(this.incomingData.timeClicked);
-    this.hours = this.formHelper.initHoursList(dayStartHour, dayEndHour);
     const startHour = this.formHelper.initStartTime(this.hours, this.incomingData.timeClicked);
     this.form.controls['startHour'].setValue(startHour);
   }
 
   submit(): void {
     if (!this.form.valid) {
-      this.snackBar.open('Veuillez remplir tous les champs', 'Undo', {
+      this.snackBar.open(INVALID_FORM_MESSAGE, 'Undo', {
         duration: 2000
       });
     } else {
-      let daysDiff = this.formHelper.getSelectedDaysIncluded(
-        this.form.controls['endDate'].value,
-        this.form.controls['startDate'].value
-      )
+      let daysDiff = null;
       if (this.form.controls['activite'].value.name === Leave.REST) {
+        daysDiff = this.formHelper.getSelectedDaysIncluded(
+          this.form.controls['endDate'].value,
+          this.form.controls['startDate'].value
+        )
         if ((daysDiff) > this.incomingData.daysOffRemaining || (daysDiff === 0 && this.incomingData.daysOffRemaining <= 1)) {
           this.snackBar.open('Vous n\'avez pas assez de congés', 'Undo', {
             duration: 2000
@@ -103,7 +108,6 @@ export class AddEventModalComponent implements OnInit {
         daysOffTaken: daysDiff
       });
     }
-
   }
 
   cancel(): void {

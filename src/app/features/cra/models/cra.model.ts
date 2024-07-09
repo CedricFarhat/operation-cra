@@ -1,4 +1,4 @@
-import { agent1, agent2, agent3 } from "../constants/cra.constants"
+import { AGENT1, AGENT2, AGENT3 } from "../constants/cra.constants"
 import { ProjectNames } from "./project.enum"
 
 export type Event = {
@@ -34,7 +34,7 @@ export type CraState = {
 }
 
 export const initialCraState = {
-  agents: [agent1, agent2, agent3],
+  agents: [AGENT1, AGENT2, AGENT3],
 }
 
 

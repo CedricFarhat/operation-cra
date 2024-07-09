@@ -33,7 +33,7 @@
         "app/features/*"
       ]
     },
-    "types": []
+    "types": ["jest", "node"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

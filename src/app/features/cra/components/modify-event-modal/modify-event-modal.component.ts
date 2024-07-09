@@ -10,7 +10,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { setHours, setMinutes } from 'date-fns';
-import { activites, dateFormatLabel } from '@features/cra/constants/cra.constants';
+import { ACTIVITES, DATE_FORMAT_LABEL, INVALID_FORM_MESSAGE } from '@features/cra/constants/cra.constants';
 import { CraFormHelper } from '@features/cra/helpers/cra-form.helper';
 import { Leave } from '@features/cra/models/project.enum';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -52,8 +52,8 @@ export class ModifyEventModalComponent {
   form: FormGroup = this.formHelper.initForm();
 
   title = signal("Modifier une activité");
-  dateFormatLabel = dateFormatLabel;
-  activites = activites;
+  dateFormatLabel = DATE_FORMAT_LABEL;
+  activites = ACTIVITES;
 
   hours: { label: string, value: number[] }[] = []
 
@@ -62,11 +62,16 @@ export class ModifyEventModalComponent {
   ngOnInit(): void {
     const dayStartHour = this.incomingData.dayStartHour();
     const dayEndHour = this.incomingData.dayEndHour();
+    this.hours = this.formHelper.initHoursList(dayStartHour, dayEndHour);
+
+    this.initForm();
+  }
+
+  initForm(): void {
     this.form.controls['startDate'].setValue(this.incomingData.startDate);
     this.form.controls['endDate'].setValue(this.incomingData.endDate);
     this.form.controls['label'].setValue(this.incomingData.label);
     this.form.controls['activite'].setValue(this.activites.find(elem => elem.name === this.incomingData.activite.name));
-    this.hours = this.formHelper.initHoursList(dayStartHour, dayEndHour);
     const startHour = this.formHelper.initStartTime(this.hours, this.incomingData.startDate);
     const endHour = this.formHelper.initStartTime(this.hours, this.incomingData.endDate);
     this.form.controls['startHour'].setValue(startHour);
@@ -75,15 +80,16 @@ export class ModifyEventModalComponent {
 
   submit(): void {
     if (!this.form.valid) {
-      this.snackBar.open('Veuillez remplir tous les champs', 'Undo', {
+      this.snackBar.open(INVALID_FORM_MESSAGE, 'Undo', {
         duration: 2000
       });
     } else {
-      let daysDiff = this.formHelper.getSelectedDaysIncluded(
-        this.form.controls['endDate'].value,
-        this.form.controls['startDate'].value
-      )
+      let daysDiff = null;
       if (this.form.controls['activite'].value.name === Leave.REST) {
+        daysDiff = this.formHelper.getSelectedDaysIncluded(
+          this.form.controls['endDate'].value,
+          this.form.controls['startDate'].value
+        )
         if ((daysDiff) > this.incomingData.daysOffRemaining || (daysDiff === 0 && this.incomingData.daysOffRemaining <= 1)) {
           this.snackBar.open('Vous n\'avez pas assez de congés', 'Undo', {
             duration: 2000
@@ -91,6 +97,7 @@ export class ModifyEventModalComponent {
           return;
         }
       }
+
       let startDate = this.form.controls['startDate'].value;
       startDate = setHours(startDate, this.form.controls['startHour'].value[0]);
       startDate = setMinutes(startDate, this.form.controls['startHour'].value[1]);
@@ -107,8 +114,6 @@ export class ModifyEventModalComponent {
         daysOffTaken: daysDiff
       });
     }
-
-
   }
 
   cancel(): void {

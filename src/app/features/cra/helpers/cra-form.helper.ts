@@ -1,6 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { addDays, differenceInBusinessDays, getHours, getMinutes, setHours, setMinutes, startOfDay } from "date-fns";
+import { DAY_START_HOUR } from "../constants/cra.constants";
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +44,10 @@ export class CraFormHelper {
     let hour = getHours(time);
     let minutes = getMinutes(time);
     const timeIndex = hours.findIndex(element => (element.value[0] === hour) && (element.value[1] === minutes));
+    if (timeIndex === -1) {
+      console.error(`Time not found for ${hour}H${minutes}`);
+      return [DAY_START_HOUR, 0];
+    }
     return hours[timeIndex].value;
   }
 

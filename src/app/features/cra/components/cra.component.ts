@@ -1,12 +1,11 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
 import {
   CalendarDateFormatter,
   CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarModule, CalendarView,
 } from 'angular-calendar';
-import { isSameMonth, isSameDay } from "date-fns";
-import { Subject } from 'rxjs';
+import { isSameMonth, isSameDay, addDays } from "date-fns";
+import { Subject, of } from 'rxjs';
 import { CustomDateFormatter } from '@core/utils/calendar-date-formatter';
 import { CraStore } from '@features/cra/cra.store';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -18,14 +17,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Agent, Event } from '../models/cra.model';
 import { FormsModule } from '@angular/forms';
-import { activites, agent1 } from '../constants/cra.constants';
-import { ActivityColors } from '../models/project.enum';
+import { DAY_END_HOUR, DAY_START_HOUR, SATURDAY, SUNDAY, ACTIVITES } from '../constants/cra.constants';
 import { ModifyEventModalComponent } from './modify-event-modal/modify-event-modal.component';
 
 @Component({
   selector: 'cra',
   standalone: true,
-  imports: [RouterOutlet,
+  imports: [
     CommonModule,
     CalendarModule,
     MatDialogModule,
@@ -34,9 +32,10 @@ import { ModifyEventModalComponent } from './modify-event-modal/modify-event-mod
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    FormsModule],
+    FormsModule
+  ],
   providers: [{
-    provide: CalendarDateFormatter, useClass: CustomDateFormatter
+    provide: CalendarDateFormatter, useClass: CustomDateFormatter,
   }
   ],
   templateUrl: './cra.component.html',
@@ -51,9 +50,9 @@ export class CraComponent {
   CalendarView = CalendarView;
   activeDayIsOpen = false;
   refresh = new Subject<void>;
-  daysToRemove = signal([0, 6]); // Doc: An array of day indexes (0 = sunday, 1 = monday etc) that will be hidden on the view
-  dayStartHour = signal(8); // 8h00
-  dayEndHour = signal(18); // 18h00
+  daysToRemove = signal([SUNDAY, SATURDAY]); // days to exclude from the calendar
+  dayStartHour = signal(DAY_START_HOUR);
+  dayEndHour = signal(DAY_END_HOUR);
   agents = signal<Agent[]>([]);
   currentAgent = signal<Agent>(this.store.agents()[0]);
 
@@ -99,18 +98,6 @@ export class CraComponent {
   ];
 
   constructor() {
-    agent1.events = [{
-      id: 1,
-      label: 'Test',
-      start: new Date("2024-07-08T12:30"),
-      end: new Date("2024-07-08T17:30"),
-      activite: {
-        id: 1,
-        color: ActivityColors.PROJECT_VENOM
-      }
-    }]
-    this.currentAgent.set(agent1);
-    this.refresh.next();
     this.agents.set(this.store.agents());
   }
 
@@ -135,7 +122,6 @@ export class CraComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('days off :', result.daysOffTaken)
         if (result.daysOffTaken) {
           this.store.updateAgent({
             ...this.currentAgent(),
@@ -162,7 +148,7 @@ export class CraComponent {
     let dialogRef = this.dialogService.open(ModifyEventModalComponent, {
       data: {
         eventId: event.id,
-        activite: activites.find(activite => activite.id === modifiedEvent!.activite.id),
+        activite: ACTIVITES.find(activite => activite.id === modifiedEvent!.activite.id),
         startDate: event.start,
         endDate: event.end,
         label: event.title,
