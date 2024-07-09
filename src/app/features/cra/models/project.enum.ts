@@ -12,5 +12,5 @@ export enum ActivityColors {
   PROJECT_VENOM = '#a9d9a9',
   PROJECT_AZURA = '#99c6f2',
   PROJECT_AMBER = '#f5d47a',
-  REST = '#f7bced'
+  REST = '#efcfff'
 }

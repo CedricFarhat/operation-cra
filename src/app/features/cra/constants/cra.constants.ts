@@ -4,21 +4,21 @@ import { ActivityColors, Leave, ProjectNames } from "../models/project.enum"
 export const agent1: Agent = {
     id: 1,
     name: "Agent 005",
-    daysOffRemaining: 7,
+    daysOffRemaining: 5,
     events: []
 }
 
 export const agent2: Agent = {
     id: 2,
     name: "Agent 006",
-    daysOffRemaining: 7,
+    daysOffRemaining: 5,
     events: []
 }
 
 export const agent3: Agent = {
     id: 3,
     name: "Agent 007",
-    daysOffRemaining: 7,
+    daysOffRemaining: 5,
     events: []
 }
 

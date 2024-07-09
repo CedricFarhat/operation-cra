@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { getHours, getMinutes, setHours, setMinutes } from "date-fns";
+import { addDays, differenceInBusinessDays, getHours, getMinutes, setHours, setMinutes, startOfDay } from "date-fns";
 
 @Injectable({
   providedIn: 'root'
@@ -50,5 +50,14 @@ export class CraFormHelper {
     const dateWithHours = setHours(date, hour);
     const finalDate = setMinutes(dateWithHours, minutes);
     return finalDate;
+  }
+
+  /**
+   * Returns the number of days bewteen 2 dates with the endDate included
+   */
+  getSelectedDaysIncluded(endDate: Date, startDate: Date): number {
+    return differenceInBusinessDays(
+      addDays(startOfDay(endDate), 1),
+      startOfDay(startDate))
   }
 }

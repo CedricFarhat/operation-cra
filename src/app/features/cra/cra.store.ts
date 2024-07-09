@@ -52,15 +52,6 @@ export const CraStore = signalStore(
             })
         },
 
-        updateCurrentAgent(agent: Agent): void {
-            patchState(store, (state) => {
-                return {
-                    ...state,
-                    currentAgent: agent
-                };
-            });
-        },
-
         removeEvent(idAgent: number, eventId: number | string | undefined): void {
             patchState(store, (state) => {
                 const agentIndex = state.agents.findIndex(agent => agent.id === idAgent);

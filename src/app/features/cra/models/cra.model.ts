@@ -31,12 +31,10 @@ export type Agent = {
 
 export type CraState = {
   agents: Agent[],
-  currentAgent: Agent
 }
 
 export const initialCraState = {
   agents: [agent1, agent2, agent3],
-  currentAgent: agent1,
 }
 
 

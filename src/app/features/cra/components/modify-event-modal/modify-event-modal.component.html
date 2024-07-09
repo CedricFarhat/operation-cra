@@ -13,10 +13,15 @@
                   </mat-select>
               </mat-form-field>
               <div>Saisissez un intitulé pour cette activité :</div>
-              <mat-form-field appearance="fill">
+              <div class="label-field">
+                <mat-form-field class="label-input"  appearance="fill">
                   <mat-label>Intitulé</mat-label>
                   <input matInput formControlName="label">
-              </mat-form-field>
+                </mat-form-field>
+                <div class="generate-label">
+                  <button  mat-stroked-button type="button" color="info" (click)="generateLabel()">Generate</button>
+                </div>
+              </div>
               <div class="dates">
                   <mat-form-field>
                       <mat-label>Date de début</mat-label>
@@ -27,13 +32,15 @@
                   </mat-form-field>
                   <mat-form-field class="hour">
                       <mat-label>Heure</mat-label>
-                      <mat-select [disabled]="disableTimeChange()" formControlName="startHour" name="startHour">
+                      <mat-select formControlName="startHour" name="startHour">
                           @for (hour of hours; track hour) {
                           <mat-option [value]="hour.value">{{hour.label}}</mat-option>
                           }
                       </mat-select>
                   </mat-form-field>
-                  <button mat-stroked-button color="info" type="button" (click)="setFirstHour()">Min</button>
+                  <div class="min-max">
+                    <button  mat-stroked-button type="button" color="info" (click)="setFirstHour()">Min</button>
+                  </div>
               </div>
               <div class="dates">
                   <mat-form-field>
@@ -45,13 +52,15 @@
                   </mat-form-field>
                   <mat-form-field class="hour">
                       <mat-label>Heure</mat-label>
-                      <mat-select [disabled]="disableTimeChange()" formControlName="endHour" name="endHour">
+                      <mat-select  formControlName="endHour" name="endHour">
                           @for (hour of hours; track hour) {
                           <mat-option [value]="hour.value">{{hour.label}}</mat-option>
                           }
                       </mat-select>
                   </mat-form-field>
-                  <button mat-stroked-button color="info" type="button" (click)="setLastHour()">Max</button>
+                  <div class="min-max">
+                    <button  mat-stroked-button type="button" color="info" (click)="setLastHour()">Max</button>
+                  </div>
               </div>
 
           </mat-dialog-content>

@@ -50,13 +50,12 @@ export class CraComponent {
   view: CalendarView = CalendarView.Week;
   CalendarView = CalendarView;
   activeDayIsOpen = false;
+  refresh = new Subject<void>;
   daysToRemove = signal([0, 6]); // Doc: An array of day indexes (0 = sunday, 1 = monday etc) that will be hidden on the view
   dayStartHour = signal(8); // 8h00
   dayEndHour = signal(18); // 18h00
-  refresh = new Subject<void>;
   agents = signal<Agent[]>([]);
   currentAgent = signal<Agent>(this.store.agents()[0]);
-  eventTitle = signal<string>('');
 
   computedEvents = computed(() => {
     return this.currentAgent().events.map((event: Event) => {
@@ -93,7 +92,6 @@ export class CraComponent {
       onClick: ({ event }: { event: CalendarEvent }): void => {
         this.store.removeEvent(this.currentAgent().id, event.id);
         const foundAgent = this.store.agents().find((agent: Agent) => agent.id === this.currentAgent().id);
-        this.store.updateCurrentAgent(foundAgent!);
         this.currentAgent.set(foundAgent!);
         this.agents.set(this.store.agents())
       },
@@ -137,6 +135,7 @@ export class CraComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        console.log('days off :', result.daysOffTaken)
         if (result.daysOffTaken) {
           this.store.updateAgent({
             ...this.currentAgent(),
@@ -151,7 +150,6 @@ export class CraComponent {
           activite: result.activite
         });
         const foundAgent = this.store.agents().find((agent: Agent) => agent.id === this.currentAgent().id);
-        this.store.updateCurrentAgent(foundAgent!);
         this.agents.set(this.store.agents())
         this.currentAgent.set(foundAgent!);
         this.refresh.next();
@@ -192,13 +190,26 @@ export class CraComponent {
           activite: result.activite
         });
         const foundAgent = this.store.agents().find((agent: Agent) => agent.id === this.currentAgent().id);
-        this.store.updateCurrentAgent(foundAgent!);
         this.agents.set(this.store.agents())
         this.currentAgent.set(foundAgent!);
         this.refresh.next();
       }
     });
 
+  }
+
+  eventChanged(calendarEvent: any): void {
+    this.store.updateEvent(this.currentAgent().id, {
+      id: calendarEvent.event.id,
+      label: calendarEvent.event.title,
+      start: calendarEvent.newStart,
+      end: calendarEvent.newEnd,
+      activite: this.currentAgent().events.find(element => element.id === calendarEvent.event.id)!.activite
+    });
+    const foundAgent = this.store.agents().find((agent: Agent) => agent.id === this.currentAgent().id);
+    this.agents.set(this.store.agents())
+    this.currentAgent.set(foundAgent!);
+    this.refresh.next();
   }
 
   eventTimesChanged(timeChangeEvent: CalendarEventTimesChangedEvent): void {
