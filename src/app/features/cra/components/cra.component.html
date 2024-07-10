@@ -32,7 +32,7 @@
         <mwl-calendar-week-view [eventTitleTemplate]="eventTitleTemplate" *ngSwitchCase="CalendarView.Week" [excludeDays]="daysToRemove()" locale="fr"
             [events]="computedEvents()" [viewDate]="viewDate()"
             [dayStartHour]="dayStartHour()" [dayEndHour]="dayEndHour() - 1" (eventTimesChanged)="eventTimesChanged($event)"
-            [refresh]="refresh" (hourSegmentClicked)="addEvent($event)" (eventTimesChanged)="eventChanged($event)">
+            [refresh]="refresh" (hourSegmentClicked)="addEvent($event)">
         </mwl-calendar-week-view>
         <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [excludeDays]="daysToRemove()"
             [activeDayIsOpen]="activeDayIsOpen" locale="fr" [events]="computedEvents()" [viewDate]="viewDate()"

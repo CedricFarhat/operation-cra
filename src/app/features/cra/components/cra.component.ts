@@ -1,11 +1,11 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   CalendarDateFormatter,
-  CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarModule, CalendarView,
+  CalendarEvent, CalendarEventAction, CalendarModule, CalendarView,
 } from 'angular-calendar';
-import { isSameMonth, isSameDay, addDays } from "date-fns";
-import { Subject, of } from 'rxjs';
+import { isSameMonth, isSameDay } from "date-fns";
+import { Subject } from 'rxjs';
 import { CustomDateFormatter } from '@core/utils/calendar-date-formatter';
 import { CraStore } from '@features/cra/cra.store';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -39,7 +39,8 @@ import { ModifyEventModalComponent } from './modify-event-modal/modify-event-mod
   }
   ],
   templateUrl: './cra.component.html',
-  styleUrl: './cra.component.scss'
+  styleUrl: './cra.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CraComponent {
   readonly store = inject(CraStore);
@@ -184,7 +185,7 @@ export class CraComponent {
 
   }
 
-  eventChanged(calendarEvent: any): void {
+  eventTimesChanged(calendarEvent: any): void {
     this.store.updateEvent(this.currentAgent().id, {
       id: calendarEvent.event.id,
       label: calendarEvent.event.title,
@@ -195,13 +196,7 @@ export class CraComponent {
     const foundAgent = this.store.agents().find((agent: Agent) => agent.id === this.currentAgent().id);
     this.agents.set(this.store.agents())
     this.currentAgent.set(foundAgent!);
-    this.refresh.next();
-  }
 
-  eventTimesChanged(timeChangeEvent: CalendarEventTimesChangedEvent): void {
-    const currentEvent = timeChangeEvent.event;
-    currentEvent.start = timeChangeEvent.newStart;
-    currentEvent.end = timeChangeEvent.newEnd
     this.refresh.next();
   }
 
